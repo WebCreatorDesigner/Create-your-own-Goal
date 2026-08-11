@@ -14,10 +14,11 @@
             --text-muted: #94a3b8;
             --success: #22c55e;
             --secondary: #334155;
+            --app-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: var(--app-font);
             background-color: var(--bg);
             background-size: cover;
             background-position: center;
@@ -29,6 +30,7 @@
             padding: 1rem;
             margin: 0;
             min-height: 100vh;
+            transition: font-family 0.3s ease;
         }
 
         .card {
@@ -63,7 +65,7 @@
             flex-wrap: wrap;
         }
         
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], select {
             flex: 1;
             padding: 0.6rem;
             border-radius: 6px;
@@ -72,6 +74,7 @@
             color: white;
             font-size: 0.9rem;
             min-width: 120px;
+            font-family: inherit;
         }
 
         button {
@@ -85,6 +88,7 @@
             transition: background 0.2s, opacity 0.2s;
             width: 100%;
             font-size: 0.9rem;
+            font-family: inherit;
         }
 
         button:hover { opacity: 0.9; }
@@ -93,7 +97,11 @@
         .btn-secondary { background-color: var(--secondary); margin-top: 1rem;}
         .btn-secondary:hover { background-color: #475569; }
         .btn-small { padding: 0.3rem 0.8rem; font-size: 0.8rem; width: auto; background-color: var(--secondary); }
-        
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-danger-small { background-color: #ef4444; color: white; margin: 0; padding: 0.4rem; font-size: 0.8rem; }
+        .btn-danger-small:hover { background-color: #dc2626; }
+
         /* Subtle Reset Button */
         .btn-reset { 
             background: transparent; 
@@ -127,6 +135,38 @@
             padding: 1.2rem;
             border-radius: 8px;
             margin-bottom: 1.5rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .settings-panel::-webkit-scrollbar { width: 6px; }
+        .settings-panel::-webkit-scrollbar-track { background: transparent; }
+        .settings-panel::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 4px; }
+
+        .section-toggle-btn {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--secondary);
+            color: var(--text);
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            text-align: left;
+            font-weight: bold;
+        }
+        .section-toggle-btn:hover { background: var(--secondary); }
+
+        .section-content {
+            padding: 0.8rem;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(51, 65, 85, 0.5);
         }
 
         .setting-row {
@@ -137,7 +177,15 @@
             font-size: 0.85rem;
         }
 
-        /* Progress Bar */
+        .setting-milestone-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--secondary);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* Standard Progress Bar */
         .progress-container {
             background-color: var(--secondary);
             border-radius: 8px;
@@ -146,13 +194,14 @@
             margin: 0.5rem 0 1rem 0;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
         .progress-fill {
             background-color: var(--primary);
             height: 100%;
             width: 0%;
-            transition: width 0.4s ease;
+            transition: width 0.4s ease, height 0.4s ease, background-color 0.3s ease;
             position: absolute;
             left: 0;
             top: 0;
@@ -164,11 +213,11 @@
             top: 0;
             height: 100%;
             width: 2px;
-            background-color: rgba(255, 255, 255, 0.6);
+            background-color: rgba(255, 255, 255, 0.8);
             z-index: 2;
             cursor: pointer;
         }
-        
+
         .milestone-marker:hover::after {
             content: attr(data-title);
             position: absolute;
@@ -181,9 +230,61 @@
             border-radius: 4px;
             font-size: 0.75rem;
             white-space: nowrap;
+            z-index: 10;
         }
 
-        /* Discrete Add Progress Tool */
+        /* Vertical Thermometer */
+        .progress-container.thermometer {
+            overflow: visible;
+            border-radius: 22px 22px 0 0;
+            width: 44px;
+            height: 200px;
+            margin: 1.5rem auto 3.8rem auto;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--secondary);
+            border-bottom: none;
+        }
+
+        .progress-container.thermometer::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -30px;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            z-index: 3;
+            border: 2px solid var(--secondary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s ease;
+        }
+
+        .progress-container.thermometer .progress-fill {
+            border-radius: 0;
+            width: 100% !important;
+            bottom: 0;
+            top: auto;
+            left: 0;
+        }
+
+        .progress-container.thermometer .milestone-marker {
+            height: 2px;
+            width: 100%;
+            left: 0 !important;
+            top: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .progress-container.thermometer .milestone-marker:hover::after {
+            bottom: auto;
+            top: 50%;
+            left: calc(100% + 12px);
+            transform: translateY(-50%);
+        }
+
+        /* Discrete Quick Add Tool */
         .quick-add-container {
             margin-bottom: 1.5rem;
             text-align: right;
@@ -222,28 +323,17 @@
             font-size: 0.85rem;
         }
 
-        /* Milestones List */
+        /* Dashboard Milestones List */
         .milestone-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-top: 1rem;
             border-top: 1px solid var(--secondary);
-            padding-top: 1.5rem;
-        }
-        
-        .add-milestone-form {
-            background: rgba(15, 23, 42, 0.6);
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            border: 1px solid var(--secondary);
+            padding-top: 1.2rem;
         }
 
         .milestone-list {
             list-style: none;
             padding: 0;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
         }
 
         .milestone-item {
@@ -297,16 +387,97 @@
     <!-- SETTINGS PANEL -->
     <div id="settings-panel" class="settings-panel hidden">
         <h2>Settings</h2>
-        <div class="setting-row">
-            <label>Theme Color:</label>
-            <input type="color" id="theme-color" value="#4f46e5" onchange="updateThemeColor(this.value)" style="width: 100%; height: 35px; padding: 0;">
+        
+        <!-- Section 1: Appearance -->
+        <div>
+            <button class="section-toggle-btn" onclick="toggleSettingsSection('sec-appearance')">
+                <span>🎨 Appearance Settings</span>
+                <span id="arrow-sec-appearance">▼</span>
+            </button>
+            <div id="sec-appearance" class="section-content hidden">
+                <div class="setting-row">
+                    <label>Theme Color:</label>
+                    <input type="color" id="theme-color" value="#4f46e5" onchange="updateAppSetting('primaryColor', this.value)" style="width: 100%; height: 35px; padding: 0;">
+                </div>
+                
+                <div class="setting-row">
+                    <label>App Font:</label>
+                    <select id="app-font" onchange="updateAppSetting('fontFamily', this.value)">
+                        <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Default (Segoe UI)</option>
+                        <option value="Arial, Helvetica, sans-serif">Arial</option>
+                        <option value="'Courier New', Courier, monospace">Courier New (Monospace)</option>
+                        <option value="'Times New Roman', Times, serif">Times New Roman</option>
+                        <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
+                        <option value="'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">Trebuchet MS</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <label>Progress Bar Style:</label>
+                    <select id="progress-style" onchange="updateAppSetting('progressStyle', this.value)">
+                        <option value="standard">Standard Bar</option>
+                        <option value="thermometer">Vertical Thermometer</option>
+                    </select>
+                </div>
+
+                <div class="setting-row" style="margin-bottom: 0;">
+                    <label>Background Image:</label>
+                    <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
+                    <button class="btn-secondary" style="padding: 0.3rem; font-size: 0.75rem; margin-top: 0.5rem;" onclick="clearBackground()">Remove Image</button>
+                </div>
+            </div>
         </div>
-        <div class="setting-row">
-            <label>Background Image:</label>
-            <input type="file" id="bg-upload" accept="image/*" onchange="handleBackgroundUpload(event)">
+
+        <!-- Section 2: Edit Goal Details -->
+        <div id="edit-goal-section" class="hidden">
+            <button class="section-toggle-btn" onclick="toggleSettingsSection('sec-edit-goal')">
+                <span>✏️ Edit Goal & Progress</span>
+                <span id="arrow-sec-edit-goal">▼</span>
+            </button>
+            <div id="sec-edit-goal" class="section-content hidden">
+                <div class="setting-row">
+                    <label>Goal Name:</label>
+                    <input type="text" id="edit-goal-name">
+                </div>
+                <div class="setting-row">
+                    <label>Description:</label>
+                    <input type="text" id="edit-goal-desc">
+                </div>
+                <div class="setting-row">
+                    <label>Total Target:</label>
+                    <input type="number" id="edit-goal-target">
+                </div>
+                <div class="setting-row">
+                    <label>Current Progress:</label>
+                    <input type="number" id="edit-goal-current">
+                </div>
+                <button class="btn-success" onclick="saveGoalEdits()">Save Goal Changes</button>
+            </div>
         </div>
-        <button class="btn-secondary" style="padding: 0.4rem; font-size: 0.8rem;" onclick="clearBackground()">Remove Background</button>
-        <button style="margin-top: 1rem; padding: 0.4rem; font-size: 0.8rem;" onclick="toggleSettings()">Close</button>
+
+        <!-- Section 3: Manage Milestones -->
+        <div id="edit-milestones-section" class="hidden">
+            <button class="section-toggle-btn" onclick="toggleSettingsSection('sec-edit-milestones')">
+                <span>🚩 Manage Milestones</span>
+                <span id="arrow-sec-edit-milestones">▼</span>
+            </button>
+            <div id="sec-edit-milestones" class="section-content hidden">
+                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 6px;">Add New Milestone:</label>
+                <div class="input-group" style="flex-direction: row;">
+                    <input type="text" id="set-m-name" placeholder="Name" style="flex: 2;">
+                    <input type="number" id="set-m-target" placeholder="Target #" style="flex: 1;">
+                </div>
+                <div class="input-group" style="flex-direction: row; margin-bottom: 0.8rem;">
+                    <input type="text" id="set-m-desc" placeholder="Desc (Opt)" style="flex: 2;">
+                    <button class="btn-inline" onclick="addSettingMilestone()" style="flex: 1;">+ Add</button>
+                </div>
+
+                <label style="font-size: 0.8rem; font-weight: bold; display: block; margin-top: 1rem; margin-bottom: 6px;">Edit Existing Milestones:</label>
+                <div id="settings-milestones-list"></div>
+            </div>
+        </div>
+
+        <button style="margin-top: 1rem; padding: 0.5rem; font-size: 0.85rem;" onclick="toggleSettings()">Close Settings</button>
     </div>
     
     <!-- STEP 1: Set Goal -->
@@ -342,7 +513,7 @@
         <button class="btn-secondary" onclick="backToStep1()">← Back</button>
     </div>
 
-    <!-- STEP 3: Main Dashboard -->
+    <!-- STEP 3: Clean Main Dashboard -->
     <div id="step-3" class="hidden">
         <h1 id="display-goal-name">Goal Name</h1>
         <p class="subtitle" id="display-goal-desc"></p>
@@ -352,12 +523,12 @@
             <span id="display-percentage" style="font-weight: bold; color: var(--text);">0%</span>
         </div>
 
-        <div class="progress-container">
+        <div class="progress-container" id="main-progress-container">
             <div class="progress-fill" id="main-progress-bar"></div>
             <div id="progress-markers"></div>
         </div>
 
-        <!-- Toggleable Quick Add -->
+        <!-- Discrete Quick Add Tool -->
         <div class="quick-add-container">
             <button class="quick-add-toggle" onclick="toggleQuickAdd()">+ Quick add</button>
             <div id="quick-add-box" class="discrete-add hidden">
@@ -366,22 +537,9 @@
             </div>
         </div>
 
-        <!-- Milestones Header & Inline Add Button -->
+        <!-- Clean Milestones Display Section -->
         <div class="milestone-header">
             <h2 style="margin: 0; padding: 0; border: none;">Milestones</h2>
-            <button class="btn-small" onclick="toggleAddDashboardMilestone()">+ Add</button>
-        </div>
-
-        <!-- Hidden Form to Add New Milestone from Dashboard -->
-        <div id="dashboard-add-milestone" class="add-milestone-form hidden">
-            <div class="input-group" style="flex-direction: row;">
-                <input type="text" id="dash-milestone-name" placeholder="Name" style="flex: 2;">
-                <input type="number" id="dash-milestone-target" placeholder="Target #" style="flex: 1;">
-            </div>
-            <div class="input-group" style="flex-direction: row; margin-bottom: 0;">
-                <input type="text" id="dash-milestone-desc" placeholder="Desc (Opt)" style="flex: 3;">
-                <button class="btn-inline" onclick="addDashboardMilestone()" style="flex: 1; background-color: var(--primary);">Save</button>
-            </div>
         </div>
 
         <ul class="milestone-list" id="dashboard-milestones"></ul>
@@ -393,31 +551,80 @@
 </div>
 
 <script>
+    // --- UTILS ---
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
     // --- SETTINGS MANAGEMENT ---
     let appSettings = JSON.parse(localStorage.getItem('myGoalSettings')) || {
         primaryColor: '#4f46e5',
-        bgImage: ''
+        bgImage: '',
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        progressStyle: 'standard'
     };
 
     function toggleSettings() {
-        document.getElementById('settings-panel').classList.toggle('hidden');
+        const panel = document.getElementById('settings-panel');
+        panel.classList.toggle('hidden');
+        
+        if (!panel.classList.contains('hidden') && goalData && goalData.isSetupComplete) {
+            document.getElementById('edit-goal-section').classList.remove('hidden');
+            document.getElementById('edit-milestones-section').classList.remove('hidden');
+            
+            document.getElementById('edit-goal-name').value = goalData.name;
+            document.getElementById('edit-goal-desc').value = goalData.desc || '';
+            document.getElementById('edit-goal-target').value = goalData.target;
+            document.getElementById('edit-goal-current').value = goalData.current;
+            
+            renderSettingsMilestones();
+        } else {
+            document.getElementById('edit-goal-section').classList.add('hidden');
+            document.getElementById('edit-milestones-section').classList.add('hidden');
+        }
+    }
+
+    function toggleSettingsSection(secId) {
+        const sec = document.getElementById(secId);
+        const arrow = document.getElementById(`arrow-${secId}`);
+        sec.classList.toggle('hidden');
+        if (arrow) {
+            arrow.textContent = sec.classList.contains('hidden') ? '▼' : '▲';
+        }
     }
 
     function applySettings() {
         document.documentElement.style.setProperty('--primary', appSettings.primaryColor);
+        document.documentElement.style.setProperty('--app-font', appSettings.fontFamily);
+        
         document.getElementById('theme-color').value = appSettings.primaryColor;
+        document.getElementById('app-font').value = appSettings.fontFamily;
+        document.getElementById('progress-style').value = appSettings.progressStyle;
         
         if (appSettings.bgImage) {
             document.body.style.backgroundImage = `url(${appSettings.bgImage})`;
         } else {
             document.body.style.backgroundImage = 'none';
         }
+
+        const pContainer = document.getElementById('main-progress-container');
+        if (pContainer) {
+            if (appSettings.progressStyle === 'thermometer') {
+                pContainer.classList.add('thermometer');
+            } else {
+                pContainer.classList.remove('thermometer');
+            }
+        }
     }
 
-    function updateThemeColor(color) {
-        appSettings.primaryColor = color;
+    function updateAppSetting(key, value) {
+        appSettings[key] = value;
         localStorage.setItem('myGoalSettings', JSON.stringify(appSettings));
         applySettings();
+        if (goalData && goalData.isSetupComplete) {
+            updateDashboard();
+        }
     }
 
     function handleBackgroundUpload(event) {
@@ -425,19 +632,15 @@
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                appSettings.bgImage = e.target.result;
-                localStorage.setItem('myGoalSettings', JSON.stringify(appSettings));
-                applySettings();
+                updateAppSetting('bgImage', e.target.result);
             };
             reader.readAsDataURL(file);
         }
     }
 
     function clearBackground() {
-        appSettings.bgImage = '';
         document.getElementById('bg-upload').value = '';
-        localStorage.setItem('myGoalSettings', JSON.stringify(appSettings));
-        applySettings();
+        updateAppSetting('bgImage', '');
     }
 
     applySettings();
@@ -524,12 +727,11 @@
         tempData.milestones.forEach(m => {
             const li = document.createElement('li');
             li.className = 'milestone-item';
-            
-            const descHtml = m.desc ? `<div class="milestone-desc">${m.desc}</div>` : '';
+            const descHtml = m.desc ? `<div class="milestone-desc">${escapeHtml(m.desc)}</div>` : '';
             
             li.innerHTML = `
                 <div style="flex: 1;">
-                    <strong>${m.name}</strong>
+                    <strong>${escapeHtml(m.name)}</strong>
                     ${descHtml}
                 </div>
                 <div style="font-size: 0.85rem; color: var(--text-muted);">Target: ${m.target}</div>
@@ -544,6 +746,113 @@
         localStorage.setItem('myGoalData', JSON.stringify(goalData));
         init();
     }
+
+    // --- EDIT GOAL FROM SETTINGS ---
+    function saveGoalEdits() {
+        if (!goalData) return;
+
+        const newName = document.getElementById('edit-goal-name').value;
+        const newDesc = document.getElementById('edit-goal-desc').value;
+        const newTarget = parseFloat(document.getElementById('edit-goal-target').value);
+        const newCurrent = parseFloat(document.getElementById('edit-goal-current').value);
+
+        if (!newName || isNaN(newTarget) || newTarget <= 0 || isNaN(newCurrent) || newCurrent < 0) {
+            alert("Please enter valid text for the name, and numbers for target and current progress.");
+            return;
+        }
+
+        goalData.name = newName;
+        goalData.desc = newDesc;
+        goalData.target = newTarget;
+        goalData.current = newCurrent;
+
+        if (goalData.current > goalData.target) goalData.current = goalData.target;
+
+        localStorage.setItem('myGoalData', JSON.stringify(goalData));
+        updateDashboard();
+        document.getElementById('settings-panel').classList.add('hidden');
+    }
+
+    // --- MANAGE MILESTONES INSIDE SETTINGS TAB ---
+    function addSettingMilestone() {
+        const nameInput = document.getElementById('set-m-name');
+        const targetInput = document.getElementById('set-m-target');
+        const descInput = document.getElementById('set-m-desc');
+
+        const mName = nameInput.value;
+        const mTarget = parseFloat(targetInput.value);
+        const mDesc = descInput.value;
+
+        if (!mName || isNaN(mTarget) || mTarget <= 0 || mTarget > goalData.target) {
+            alert(`Enter a valid name and target number between 1 and ${goalData.target}.`);
+            return;
+        }
+
+        goalData.milestones.push({ name: mName, target: mTarget, desc: mDesc });
+        goalData.milestones.sort((a, b) => a.target - b.target);
+
+        nameInput.value = ''; targetInput.value = ''; descInput.value = '';
+        localStorage.setItem('myGoalData', JSON.stringify(goalData));
+        renderSettingsMilestones();
+        updateDashboard();
+    }
+
+    function saveSettingMilestone(index) {
+        const name = document.getElementById(`set-m-name-${index}`).value;
+        const target = parseFloat(document.getElementById(`set-m-target-${index}`).value);
+        const desc = document.getElementById(`set-m-desc-${index}`).value;
+
+        if (!name || isNaN(target) || target <= 0 || target > goalData.target) {
+            alert(`Enter a valid name and target number between 1 and ${goalData.target}.`);
+            return;
+        }
+
+        goalData.milestones[index] = { name, target, desc };
+        goalData.milestones.sort((a, b) => a.target - b.target);
+
+        localStorage.setItem('myGoalData', JSON.stringify(goalData));
+        renderSettingsMilestones();
+        updateDashboard();
+    }
+
+    function deleteSettingMilestone(index) {
+        if (confirm("Delete this milestone?")) {
+            goalData.milestones.splice(index, 1);
+            localStorage.setItem('myGoalData', JSON.stringify(goalData));
+            renderSettingsMilestones();
+            updateDashboard();
+        }
+    }
+
+    function renderSettingsMilestones() {
+        const list = document.getElementById('settings-milestones-list');
+        list.innerHTML = '';
+
+        if (!goalData.milestones || goalData.milestones.length === 0) {
+            list.innerHTML = '<div style="font-size:0.8rem; color: var(--text-muted);">No milestones added yet.</div>';
+            return;
+        }
+
+        goalData.milestones.forEach((m, index) => {
+            const card = document.createElement('div');
+            card.className = 'setting-milestone-card';
+            card.innerHTML = `
+                <div class="input-group" style="flex-direction: row; margin-bottom: 6px;">
+                    <input type="text" id="set-m-name-${index}" value="${escapeHtml(m.name)}" placeholder="Name" style="flex: 2;">
+                    <input type="number" id="set-m-target-${index}" value="${m.target}" placeholder="Target #" style="flex: 1;">
+                </div>
+                <div class="input-group" style="flex-direction: row; margin-bottom: 6px;">
+                    <input type="text" id="set-m-desc-${index}" value="${escapeHtml(m.desc || '')}" placeholder="Description (Optional)">
+                </div>
+                <div class="input-group" style="flex-direction: row; margin-bottom: 0;">
+                    <button class="btn-inline btn-success" onclick="saveSettingMilestone(${index})" style="padding: 0.3rem; font-size: 0.8rem;">Save</button>
+                    <button class="btn-inline btn-danger-small" onclick="deleteSettingMilestone(${index})" style="padding: 0.3rem; font-size: 0.8rem;">Delete</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
 
     // --- STEP 3 (DASHBOARD) ---
     function toggleQuickAdd() {
@@ -563,35 +872,7 @@
         if (goalData.current > goalData.target) goalData.current = goalData.target;
 
         amountInput.value = '';
-        toggleQuickAdd(); // Hide box after adding
-        localStorage.setItem('myGoalData', JSON.stringify(goalData));
-        updateDashboard();
-    }
-    
-    function toggleAddDashboardMilestone() {
-        document.getElementById('dashboard-add-milestone').classList.toggle('hidden');
-    }
-
-    function addDashboardMilestone() {
-        const nameInput = document.getElementById('dash-milestone-name');
-        const descInput = document.getElementById('dash-milestone-desc');
-        const targetInput = document.getElementById('dash-milestone-target');
-        
-        const mName = nameInput.value;
-        const mDesc = descInput.value;
-        const mTarget = parseFloat(targetInput.value);
-
-        if (!mName || isNaN(mTarget) || mTarget <= 0 || mTarget > goalData.target) {
-            alert(`Enter a valid name and a target number between 1 and ${goalData.target}.`);
-            return;
-        }
-
-        goalData.milestones.push({ name: mName, desc: mDesc, target: mTarget });
-        goalData.milestones.sort((a, b) => a.target - b.target);
-
-        nameInput.value = ''; descInput.value = ''; targetInput.value = '';
-        toggleAddDashboardMilestone();
-        
+        toggleQuickAdd();
         localStorage.setItem('myGoalData', JSON.stringify(goalData));
         updateDashboard();
     }
@@ -614,8 +895,19 @@
         const percent = Math.min((goalData.current / goalData.target) * 100, 100);
         const displayPercent = percent % 1 === 0 ? percent : percent.toFixed(1);
         document.getElementById('display-percentage').textContent = `${displayPercent}%`;
-        document.getElementById('main-progress-bar').style.width = percent + '%';
+        
+        const pBar = document.getElementById('main-progress-bar');
+        const isThermometer = appSettings.progressStyle === 'thermometer';
 
+        if (isThermometer) {
+            pBar.style.height = percent + '%';
+            pBar.style.width = '100%';
+        } else {
+            pBar.style.width = percent + '%';
+            pBar.style.height = '100%';
+        }
+
+        // Render Markers on Bar
         const markersContainer = document.getElementById('progress-markers');
         markersContainer.innerHTML = '';
         
@@ -624,17 +916,24 @@
             if (mPercent <= 100) {
                 const marker = document.createElement('div');
                 marker.className = 'milestone-marker';
-                marker.style.left = mPercent + '%';
-                marker.setAttribute('data-title', `${m.name} (${m.target})`);
+                
+                if (isThermometer) {
+                    marker.style.bottom = mPercent + '%';
+                } else {
+                    marker.style.left = mPercent + '%';
+                }
+                
+                marker.setAttribute('data-title', `${escapeHtml(m.name)} (${m.target})`);
                 markersContainer.appendChild(marker);
             }
         });
 
+        // Clean Dashboard Milestones List
         const container = document.getElementById('dashboard-milestones');
         container.innerHTML = '';
 
         if (goalData.milestones.length === 0) {
-            container.innerHTML = '<li style="color: var(--text-muted); font-size: 0.85rem;">No milestones set.</li>';
+            container.innerHTML = '<li style="color: var(--text-muted); font-size: 0.85rem;">No milestones set yet. Add them in Settings!</li>';
         }
 
         goalData.milestones.forEach(m => {
@@ -643,11 +942,11 @@
             li.className = `milestone-item ${isAchieved ? 'achieved' : ''}`;
             
             const listPercent = Math.min((goalData.current / m.target) * 100, 100);
-            const descHtml = m.desc ? `<div class="milestone-desc">${m.desc}</div>` : '';
+            const descHtml = m.desc ? `<div class="milestone-desc">${escapeHtml(m.desc)}</div>` : '';
             
             li.innerHTML = `
                 <div style="flex: 1; padding-right: 10px;">
-                    <strong>${m.name}</strong><br>
+                    <strong>${escapeHtml(m.name)}</strong><br>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">Target: ${m.target}</span>
                     ${descHtml}
                 </div>
